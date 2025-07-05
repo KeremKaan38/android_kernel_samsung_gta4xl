@@ -1,4 +1,4 @@
-name: Replace tzdev from 
+name: Replace tzdev
 
 on:
   workflow_dispatch:  # Elle çalıştırmak için
@@ -11,7 +11,7 @@ jobs:
     - name: Bu repoyu klonla (ramdisk branch)
       uses: actions/checkout@v4
       with:
-        ref: ramdisk  # Hedef branch
+        ref: Ramdisk  # Hedef branch
 
     - name: Git kullanıcı bilgilerini ayarla
       run: |
