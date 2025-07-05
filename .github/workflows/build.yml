@@ -1,51 +1,37 @@
-name: Cherry Pick from Remote
+name: Replace tzdev from 
 
 on:
-  workflow_dispatch:
+  workflow_dispatch:  # Elle çalıştırmak için
 
 jobs:
-  cherry-pick:
+  replace-tzdev:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Bu repoyu klonla
+    - name: Bu repoyu klonla (ramdisk branch)
       uses: actions/checkout@v4
+      with:
+        ref: ramdisk  # Hedef branch
 
     - name: Git kullanıcı bilgilerini ayarla
       run: |
         git config --global user.name "github-actions[bot]"
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-    - name: Kaynak repoyu ekle ve fetch et
+    - name: FreshROMs reposunu klonla
       run: |
-        git remote add upstream https://github.com/sundrams-playground/kernel_samsung_exynos9610.git
-        git fetch upstream wip
+        git clone --depth=1 --branch wip-13.0.0_frsh6 https://github.com/FreshROMs/android_kernel_samsung_exynos9610_mint.git temp-freshroms
 
-    - name: Yeni branch oluştur
-      run: git checkout -b cherry-pick-upstream
-
-    - name: Cherry-pick işlemi
+    - name: Mevcut tzdev klasörünü değiştir
       run: |
-        COMMITS=(
-          e79f371ee2654dffc9ecc0ef1a5bb14f63ea7bd4
-          b9f8f6721ee1504900a8154516743240cfea00b1
-          a5fbf791ef2f843ab927479ac64c988412def0cf
-          6f2d3fc1d627f6342a6652bcb4d691fd71312e042
-          ecdab50e91645b9bf3224e9ff26a777613984746
-          6d213829dba6b11b066b36ff76d998d6e25fb12
-        )
+        rm -rf drivers/misc/tzdev
+        cp -r temp-freshroms/drivers/misc/tzdev drivers/misc/
 
-        for commit in "${COMMITS[@]}"; do
-          echo "🔄 Cherry-picking $commit..."
-          if git cat-file -e $commit^{commit}; then
-            git cherry-pick $commit || {
-              echo "⛔ Çatışma oluştu: $commit"
-              exit 1
-            }
-          else
-            echo "⚠️ Commit bulunamadı: $commit — atlanıyor."
-          fi
-        done
+    - name: Değişiklikleri commit et
+      run: |
+        git add drivers/misc/tzdev
+        git commit -m "update tzdev"
 
-    - name: Değişiklikleri push et
-      run: git push origin cherry-pick-upstream --force
+    - name: Değişiklikleri ramdisk branch'ine push et
+      run: |
+        git push origin ramdisk --force
