@@ -34,4 +34,4 @@ jobs:
 
     - name: Değişiklikleri ramdisk branch'ine push et
       run: |
-        git push origin ramdisk --force
+        git push origin Ramdisk --force
