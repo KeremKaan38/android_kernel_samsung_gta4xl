@@ -6,7 +6,7 @@
 
 # Ortam değişkenleri
 KERNEL_DIR=$(pwd)
-DEFCONFIG=exynos9611-gta4xlwifi_defconfig
+DEFCONFIG=m30s_defconfig
 TOOLCHAIN_DIR=$KERNEL_DIR/toolchain
 CLANG_PATH=$TOOLCHAIN_DIR/weebx
 OUT_DIR=$KERNEL_DIR/out
